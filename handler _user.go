@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/pravytecy/rssaggregator/internal/auth"
 	"github.com/pravytecy/rssaggregator/internal/db"
 )
 
@@ -31,5 +32,19 @@ func(apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request
 		respondWithError(w,400,fmt.Sprintf("Couldn't create User: %v", err))
 		return
 	}
-	respondWithJson(w,200,user)
+	respondWithJson(w,201,user)
+}
+
+func(apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request){
+	apiKey, err := auth.GetApiKey(r.Header)
+	if err != nil {
+		respondWithError(w,403,fmt.Sprintf("Auth error: %v", err))
+		return
+	}
+	users, err := apiCfg.DB.GetCustomers(r.Context(),apiKey)
+	if err != nil {
+		respondWithError(w,400,fmt.Sprintf("Couldn't get user: %v", err))
+		return
+	}
+	respondWithJson(w,200,users)
 }
