@@ -18,8 +18,8 @@ func respondWithError(w http.ResponseWriter, statusCode int, msg string){
 
 func respondWithJson(w http.ResponseWriter, statusCode int, payload interface{}){
 	data,err := json.Marshal(payload)
-	log.Printf("Failed to marshall response %v",payload)
 	if err != nil{
+		log.Printf("Failed to marshall response %v",payload)
 		w.WriteHeader(500)
 		return
 	}
